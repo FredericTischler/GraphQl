@@ -3,10 +3,10 @@
 import React from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { useQuery } from '@apollo/client'
-import { GET_XP } from '@/lib/queries'
+import { queryProfile } from '@/lib/queries'
 
 export default function ProgressChart() {
-    const { data, loading, error } = useQuery(GET_XP)
+    const { data, loading, error } = useQuery(queryProfile)
 
     if (loading)
         return <p className="text-center text-gray-400">Chargement du graphique...</p>
@@ -16,24 +16,23 @@ export default function ProgressChart() {
     }
 
     // On prend le premier utilisateur car "user" est retourné sous forme de tableau
-    const transactions = data.user?.[0]?.transactions ?? []
+    const transactions = data.user?.[0]?.xp ?? []
 
     // Trier les transactions par date croissante
     const sortedTransactions = transactions.slice().sort(
-        (a: any, b: any) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        (a: { createdAt: string | number | Date }, b: { createdAt: string | number | Date }) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     )
 
     // Calculer le cumul de XP au fil du temps
-    let cumulativeXp = 0
-    const formattedData = sortedTransactions.map((tx: any) => {
-        cumulativeXp += tx.amount
-        return {
+    const formattedData = sortedTransactions.reduce((acc: any[], tx: any) => {
+        const cumulativeXp = (acc.length > 0 ? acc[acc.length - 1].xp : 0) + tx.amount
+        acc.push({
             xp: cumulativeXp,
             date: new Date(tx.createdAt).toLocaleDateString()
-        }
-    })
-    console.log(cumulativeXp)
+        })
+        return acc
+    }, [])
+
     return (
         <div className="mt-8 p-6 bg-zinc-900 text-white rounded-lg shadow-xl">
             <h2 className="text-2xl font-bold mb-4 text-center">

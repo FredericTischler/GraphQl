@@ -32,7 +32,7 @@ export default function LoginPage() {
 
                 <input
                     type="text"
-                    placeholder="Nom d'utilisateur ou email"
+                    placeholder="Username or email"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="bg-zinc-700 text-white border border-zinc-600 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -40,7 +40,7 @@ export default function LoginPage() {
 
                 <input
                     type="password"
-                    placeholder="Mot de passe"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="bg-zinc-700 text-white border border-zinc-600 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -48,9 +48,9 @@ export default function LoginPage() {
 
                 <button
                     type="submit"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors"
+                    className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded"
                 >
-                    Se connecter
+                    Sign in
                 </button>
             </form>
         </main>
