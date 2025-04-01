@@ -15,16 +15,29 @@ export default function ProgressChart() {
         return <p className="text-center text-red-500">Erreur lors du chargement des données</p>
     }
 
-    // On prend le premier utilisateur car "user" est retourné sous forme de tableau
-    const transactions = data.user?.[0]?.xp ?? []
 
-    // Trier les transactions par date croissante
-    const sortedTransactions = transactions.slice().sort(
-        (a: { createdAt: string | number | Date }, b: { createdAt: string | number | Date }) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+
+    interface Transaction {
+        createdAt: string;
+        amount: number;
+        // Ajoutez d'autres propriétés si nécessaire
+    }
+
+    interface FormattedData {
+        xp: number;
+        date: string;
+    }
+
+// Supposez que transactions provient de data.user?.[0]?.xp
+    const transactions = (data.user?.[0]?.xp ?? []) as Transaction[]
+
+// Trier les transactions par date croissante
+    const sortedTransactions: Transaction[] = transactions.slice().sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     )
 
-    // Calculer le cumul de XP au fil du temps
-    const formattedData = sortedTransactions.reduce((acc: any[], tx: any) => {
+// Calculer le cumul de XP au fil du temps avec reduce en précisant le type générique FormattedData[]
+    const formattedData = sortedTransactions.reduce<FormattedData[]>((acc, tx) => {
         const cumulativeXp = (acc.length > 0 ? acc[acc.length - 1].xp : 0) + tx.amount
         acc.push({
             xp: cumulativeXp,
@@ -32,6 +45,8 @@ export default function ProgressChart() {
         })
         return acc
     }, [])
+
+
 
     return (
         <div className="mt-8 p-6 bg-zinc-900 text-white rounded-lg shadow-xl">

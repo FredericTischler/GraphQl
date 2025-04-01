@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ApolloProvider, useQuery } from '@apollo/client'
+import { ApolloProvider, useQuery, ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { queryProfile } from '@/lib/queries'
 import { createApolloClient } from '@/lib/apolloClient'
 import { useRouter } from 'next/navigation'
-import { logout } from '@/lib/auth' // Assurez-vous que le chemin est correct
+import { logout } from '@/lib/auth'
 import ProgressChart from '@/app/components/ProgressChart'
 import ProjectXpList from '@/app/components/ProjectXpList'
 import AuditRatioChart from '@/app/components/AuditRatioChart'
@@ -27,7 +27,6 @@ function ProfileContent() {
 
     // Récupération du premier utilisateur
     const user = data.user?.[0]
-    const xpTotal = user?.xpTotal?.aggregate?.sum?.amount ?? 0
 
     const handleLogout = () => {
         logout()
@@ -72,7 +71,7 @@ function ProfileContent() {
 
 export default function ProfilePage() {
     const router = useRouter()
-    const [client, setClient] = useState<any>(null)
+    const [client, setClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null)
 
     useEffect(() => {
         const rawToken = localStorage.getItem('token')

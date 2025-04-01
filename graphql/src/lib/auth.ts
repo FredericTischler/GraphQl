@@ -36,19 +36,25 @@ export function getToken(): string | null {
     return localStorage.getItem('token')
 }
 
-function parseJwt(token: string): any {
+interface JwtPayload {
+    id?: string;
+    user_id?: string;
+    [key: string]: unknown;
+}
+
+function parseJwt(token: string): JwtPayload | null {
     try {
-        const payload = token.split('.')[1]
-        return JSON.parse(atob(payload))
-    } catch (e) {
-        return null
+        const payload = token.split('.')[1];
+        return JSON.parse(atob(payload)) as JwtPayload;
+    } catch {
+        return null;
     }
 }
 
 export function getUserIdFromToken(): string | null {
-    const token = getToken()
-    if (!token) return null
+    const token = getToken();
+    if (!token) return null;
 
-    const decoded = parseJwt(token)
-    return decoded?.id || decoded?.user_id || null
+    const decoded = parseJwt(token);
+    return decoded?.id || decoded?.user_id || null;
 }

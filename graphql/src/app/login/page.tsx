@@ -16,7 +16,7 @@ export default function LoginPage() {
             const token = await login(username, password)
             localStorage.setItem('token', token)
             router.push('/profile')
-        } catch (err) {
+        } catch  {
             setError('Identifiants invalides')
         }
     }

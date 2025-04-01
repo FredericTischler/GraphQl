@@ -28,8 +28,6 @@ export default function AuditRatioChart() {
     // Récupérer les XP données (up) et reçues (down) depuis la query globale
     const xpGiven = user?.totalUp ?? 0
     const xpReceived = user?.totalDown ?? 0
-    // Récupérer le total XP depuis l'agrégation
-    const totalXp = user?.xpTotal?.aggregate?.sum?.amount ?? 0
 
     const ratio = xpReceived > 0 ? xpGiven / xpReceived : 0
     const maxValue = Math.max(xpGiven, xpReceived)

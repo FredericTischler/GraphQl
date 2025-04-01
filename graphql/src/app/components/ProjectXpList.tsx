@@ -4,10 +4,23 @@ import React, { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { queryProfile } from '@/lib/queries'
 
+interface FinishedProject {
+    group: {
+        path: string
+        createdAt: string
+    }
+}
+
+interface Transaction {
+    path: string
+    amount: number
+    createdAt: string
+}
+
 export default function ProjectXpList() {
     const { data, loading, error } = useQuery(queryProfile)
-    const [showAll, setShowAll] = useState(false)
-    const visibleCount = 5
+    const [showAll, setShowAll] = useState<boolean>(false)
+    const visibleCount: number = 5
 
     if (loading)
         return (
@@ -24,20 +37,20 @@ export default function ProjectXpList() {
         )
     }
 
-    // On récupère le premier utilisateur
-    const finishedProjects = data.user?.[0]?.finished_projects ?? []
-    const totalXp = data.user?.[0]?.xpTotal?.aggregate?.sum?.amount ?? 0
+    // On récupère le premier utilisateur et on force le typage
+    const finishedProjects = (data.user?.[0]?.finished_projects ?? []) as FinishedProject[]
+    const totalXp: number = data.user?.[0]?.xpTotal?.aggregate?.sum?.amount ?? 0
     // On récupère la liste des transactions XP
-    const xpTransactions = data.user?.[0]?.xp ?? []
+    const xpTransactions = (data.user?.[0]?.xp ?? []) as Transaction[]
 
     // Trier les projets du plus récent au plus ancien selon la date de création
-    const sortedProjects = finishedProjects.slice().sort(
-        (a: any, b: any) =>
+    const sortedProjects: FinishedProject[] = finishedProjects.slice().sort(
+        (a, b) =>
             new Date(b.group.createdAt).getTime() - new Date(a.group.createdAt).getTime()
     )
 
     // Déterminer les projets à afficher
-    const displayedProjects = showAll
+    const displayedProjects: FinishedProject[] = showAll
         ? sortedProjects
         : sortedProjects.slice(0, visibleCount)
 
@@ -61,11 +74,11 @@ export default function ProjectXpList() {
                 <p className="text-center text-gray-500">Aucun projet trouvé.</p>
             ) : (
                 <ul className="divide-y divide-zinc-800">
-                    {displayedProjects.map((proj: any, index: number) => {
+                    {displayedProjects.map((proj: FinishedProject, index: number) => {
                         // Pour chaque projet, filtrer les transactions XP dont le "path" correspond au projet
                         const projectXp = xpTransactions
-                            .filter((tx: any) => tx.path === proj.group.path)
-                            .reduce((sum: number, tx: any) => sum + tx.amount, 0)
+                            .filter((tx: Transaction) => tx.path === proj.group.path)
+                            .reduce((sum: number, tx: Transaction) => sum + tx.amount, 0)
                         return (
                             <li
                                 key={index}
